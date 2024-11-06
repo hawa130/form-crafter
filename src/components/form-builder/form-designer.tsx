@@ -96,7 +96,7 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                         </Button>
                       </ButtonGroup>
                       <Popconfirm
-                        title="确定要清空表单吗？"
+                        title="确定要清空表单设计器内容吗？"
                         okType="danger"
                         onConfirm={() => {
                           formApi.reset()
