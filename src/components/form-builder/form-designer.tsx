@@ -244,11 +244,12 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                                   icon={<CircleMinusIcon />}
                                 />
                               </Tooltip>
-                              <div className="flex flex-col [&_:not(:last-child)_button]:border-border [&_:not(:last-child)_button]:border-b [&_:not(:last-child)_button]:rounded-b-none [&_:last-child_button]:rounded-t-none">
+                              <div className="flex flex-col">
                                 <Tooltip content="上移" position="right">
                                   <Button
                                     icon={<ChevronUpIcon />}
                                     // disabled={index === 0}
+                                    className="rounded-b-none"
                                     onClick={() => {
                                       if (index === 0) return
                                       const values = formState.values?.form ?? ([] as SchemaModel[])
@@ -260,10 +261,12 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                                     }}
                                   />
                                 </Tooltip>
+                                <div className="border-b border-border" />
                                 <Tooltip content="下移" position="right">
                                   <Button
                                     icon={<ChevronDownIcon />}
                                     // disabled={index === arrayFields.length - 1}
+                                    className="rounded-t-none"
                                     onClick={() => {
                                       if (index === arrayFields.length - 1) return
                                       const values = formState.values?.form ?? ([] as SchemaModel[])
@@ -285,7 +288,7 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                 </div>
                 <div className="pr-8">
                   <Button
-                    className="my-3 !rounded-medium"
+                    className="my-3 rounded-medium"
                     block
                     theme="outline"
                     size="large"
