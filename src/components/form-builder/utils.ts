@@ -1,5 +1,5 @@
-import type { SchemaModel } from './index'
 import { z } from 'zod'
+import type { SchemaModel } from './index'
 
 export const schemeModelSchema = z.array(
   z.object({

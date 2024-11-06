@@ -1,9 +1,9 @@
 import { type ReactNode, forwardRef } from 'react'
 import { Button, Form, Tooltip } from '@douyinfe/semi-ui'
 import type { BaseFormProps } from '@douyinfe/semi-ui/lib/es/form'
-import type { SchemaModel } from './index'
-import { cn } from '@/lib/utils.ts'
 import { LocateIcon } from 'lucide-react'
+import { cn } from '@/lib/utils.ts'
+import type { SchemaModel } from './index'
 
 export interface SchemaFormProps extends BaseFormProps {
   schema?: (SchemaModel | undefined)[]

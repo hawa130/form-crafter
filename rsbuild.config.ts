@@ -1,8 +1,8 @@
+import { SemiRspackPlugin } from '@douyinfe/semi-rspack-plugin'
 import { defineConfig } from '@rsbuild/core'
 import { pluginReact } from '@rsbuild/plugin-react'
-import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack'
 import { pluginSass } from '@rsbuild/plugin-sass'
-import { SemiRspackPlugin } from '@douyinfe/semi-rspack-plugin'
+import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack'
 
 export default defineConfig({
   plugins: [
