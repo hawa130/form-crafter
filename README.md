@@ -1,11 +1,13 @@
-# Rsbuild Project
+# Form Crafter
+
+A simple form builder for crafting forms.
 
 ## Setup
 
 Install the dependencies:
 
 ```bash
-pnpm install
+bun install
 ```
 
 ## Get Started
@@ -13,17 +15,17 @@ pnpm install
 Start the dev server:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 Build the app for production:
 
 ```bash
-pnpm build
+bun run build
 ```
 
 Preview the production build locally:
 
 ```bash
-pnpm preview
+bun run preview
 ```
