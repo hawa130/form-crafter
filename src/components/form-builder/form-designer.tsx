@@ -1,5 +1,13 @@
 import { type ReactNode, createContext, forwardRef, useContext } from 'react'
-import { ArrayField, Button, ButtonGroup, Form, Toast, Tooltip } from '@douyinfe/semi-ui'
+import {
+  ArrayField,
+  Button,
+  ButtonGroup,
+  Form,
+  Popconfirm,
+  Toast,
+  Tooltip,
+} from '@douyinfe/semi-ui'
 import type { BaseFormProps } from '@douyinfe/semi-ui/lib/es/form'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import {
@@ -10,6 +18,7 @@ import {
   DownloadIcon,
   HelpCircleIcon,
   PlusIcon,
+  Trash2Icon,
   UploadIcon,
 } from 'lucide-react'
 import { nanoid } from 'nanoid'
@@ -56,9 +65,9 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
           <ArrayField field="form">
             {({ arrayFields, addWithInitValue }) => (
               <>
-                <Form.Slot noLabel>
+                <div className="py-3">
                   <div className="flex justify-between items-center gap-2 pr-8">
-                    <div className="flex">
+                    <div className="flex gap-2">
                       <ButtonGroup>
                         <Button
                           icon={<DownloadIcon />}
@@ -86,6 +95,18 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                           导出
                         </Button>
                       </ButtonGroup>
+                      <Popconfirm
+                        title="确定要清空表单吗？"
+                        okType="danger"
+                        onConfirm={() => {
+                          formApi.reset()
+                          localStorage.removeItem(formKey)
+                        }}
+                      >
+                        <Button icon={<Trash2Icon />} type="danger">
+                          清空
+                        </Button>
+                      </Popconfirm>
                     </div>
                     <Button
                       type="primary"
@@ -100,7 +121,7 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                       保存
                     </Button>
                   </div>
-                </Form.Slot>
+                </div>
                 <div ref={parent} onBlur={() => onFormFocus?.(undefined)}>
                   {arrayFields.map(({ field, key, remove }, index) => {
                     const row = formState.values?.form?.[index] as SchemaModel | undefined
@@ -219,8 +240,9 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                                 <Tooltip content="上移" position="right">
                                   <Button
                                     icon={<ChevronUpIcon />}
-                                    disabled={index === 0}
+                                    // disabled={index === 0}
                                     onClick={() => {
+                                      if (index === 0) return
                                       const values = formState.values?.form ?? ([] as SchemaModel[])
                                       ;[values[index], values[index - 1]] = [
                                         values[index - 1],
@@ -233,8 +255,9 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                                 <Tooltip content="下移" position="right">
                                   <Button
                                     icon={<ChevronDownIcon />}
-                                    disabled={index === arrayFields.length - 1}
+                                    // disabled={index === arrayFields.length - 1}
                                     onClick={() => {
+                                      if (index === arrayFields.length - 1) return
                                       const values = formState.values?.form ?? ([] as SchemaModel[])
                                       ;[values[index], values[index + 1]] = [
                                         values[index + 1],
@@ -257,10 +280,10 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                     className="my-3 border border-dashed border-primary bg-transparent"
                     block
                     size="large"
-                    onClick={() => addWithInitValue({ id: nanoid(8) })}
+                    onClick={() => addWithInitValue({ id: nanoid(8), type: 'input' })}
                     icon={<PlusIcon />}
                   >
-                    添加
+                    添加字段
                   </Button>
                 </div>
               </>
@@ -402,21 +425,21 @@ const SelectOption = ({ className }: { className?: string }) => {
                     />
                   )}
                 </div>
-                <Form.Slot noLabel>
+                <div className="py-3">
                   <Button
                     type="danger"
                     theme="borderless"
                     icon={<CircleMinusIcon />}
                     onClick={remove}
                   />
-                </Form.Slot>
+                </div>
               </div>
             ))}
-            <Form.Slot noLabel>
+            <div className="py-3">
               <Button icon={<PlusIcon />} onClick={add}>
                 添加选项
               </Button>
-            </Form.Slot>
+            </div>
           </>
         )}
       </ArrayField>

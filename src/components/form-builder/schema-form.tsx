@@ -12,12 +12,13 @@ export interface SchemaFormProps extends BaseFormProps {
     highlightField?: string
     highlightClassName?: string
     onLocate?: (id: string) => void
+    empty?: ReactNode
   }
 }
 
 export const SchemaForm = forwardRef<Form, SchemaFormProps>(
   ({ schema = [], onSubmit, preview, ...props }, ref) => {
-    const form: ReactNode = schema.map((item, index) => {
+    const form: ReactNode[] = schema.map((item, index) => {
       if (!item) return null
 
       const label = item.field ?? `字段 ${index + 1}`
@@ -202,10 +203,14 @@ export const SchemaForm = forwardRef<Form, SchemaFormProps>(
       )
     })
 
-    return (
+    return form.length > 0 ? (
       <Form autoScrollToError onSubmit={onSubmit} ref={ref} {...props}>
         {form}
       </Form>
+    ) : (
+      <div className="py-3 text-center text-sm text-text-2">
+        {preview?.empty ?? '请在表单设计器中添加字段'}
+      </div>
     )
   },
 )
