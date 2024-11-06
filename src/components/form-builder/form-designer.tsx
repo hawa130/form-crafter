@@ -133,7 +133,7 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                       >
                         <div
                           id={row?.id}
-                          className="my-3 flex items-stretch scroll-m-3 [&>:first-child]:focus-within:border-focus [&>:first-child]:focus-within:shadow-elevated"
+                          className="py-3 flex items-stretch [&>:first-child]:focus-within:border-focus [&>:first-child]:focus-within:shadow-elevated"
                           onFocus={() => onFormFocus?.(row?.id)}
                         >
                           <section className="px-5 pt-5 pb-2 border rounded-medium bg-bg-1 flex-grow transition">
@@ -141,7 +141,15 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                               <div className="flex items-center justify-center h-6 min-w-6 text-large/none text-text-3 border rounded-full bg-bg-2">
                                 {index + 1}
                               </div>
-                              <h5 className="text-h5 font-bold">{label}</h5>
+                              <h5
+                                className={cn(
+                                  'text-h5 font-bold',
+                                  row?.required &&
+                                    "after:content-['*'] after:text-danger after:ml-1",
+                                )}
+                              >
+                                {label}
+                              </h5>
                             </div>
                             <div className="sm:grid sm:grid-cols-12 sm:gap-x-4">
                               <Form.Select
@@ -175,7 +183,7 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                                       <br />
                                       简明描述该项应该填写的内容。
                                       <br />
-                                      建议<b>不超过 8 个字</b>，更详细的提示请写到提示中。
+                                      建议<b>不超过 8 个字</b>，更详细的信息请写到提示中。
                                     </HelpIcon>
                                   ),
                                 }}
@@ -277,8 +285,9 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                 </div>
                 <div className="pr-8">
                   <Button
-                    className="my-3 border border-dashed border-primary bg-transparent"
+                    className="my-3 !rounded-medium"
                     block
+                    theme="outline"
                     size="large"
                     onClick={() => addWithInitValue({ id: nanoid(8), type: 'input' })}
                     icon={<PlusIcon />}
@@ -394,49 +403,52 @@ const SelectDefault = ({ className }: { className?: string }) => {
 
 const SelectOption = ({ className }: { className?: string }) => {
   const { field, type } = useDesignerField()
+  const [parent] = useAutoAnimate({ duration: 100 })
 
   return (
-    <div className={className}>
+    <div className={cn('-mx-5 px-5 pt-2 mt-2 border-t', className)}>
       <ArrayField field={`${field}.options`}>
         {({ add, arrayFields }) => (
           <>
-            {arrayFields.map(({ field, key, remove }, index) => (
-              <div key={key} className="grid grid-cols-[1fr_auto] gap-2">
-                <div className="flex gap-3">
-                  <Form.Input
-                    fieldClassName={cn('flex-grow', type === 'select' && 'basis-1/2')}
-                    field={`${field}.label`}
-                    placeholder={`选项 ${index + 1}`}
-                    rules={[
-                      { required: true, message: '选项不能为空' },
-                      {
-                        max: type === 'select' ? 80 : 20,
-                        message: type === 'select' ? '选项最长 80 个字符' : '选项最长 20 个字符',
-                      },
-                    ]}
-                    noLabel
-                  />
-                  {type !== 'select' && (
+            <div ref={parent}>
+              {arrayFields.map(({ field, key, remove }, index) => (
+                <div key={key} className="grid grid-cols-[1fr_auto] gap-2">
+                  <div className="flex gap-3">
                     <Form.Input
-                      fieldClassName="basis-1/2"
-                      field={`${field}.description`}
-                      placeholder="无提示"
+                      fieldClassName={cn('flex-grow', type === 'select' && 'basis-1/2')}
+                      field={`${field}.label`}
+                      placeholder={`选项 ${index + 1}`}
+                      rules={[
+                        { required: true, message: '选项不能为空' },
+                        {
+                          max: type === 'select' ? 80 : 20,
+                          message: type === 'select' ? '选项最长 80 个字符' : '选项最长 20 个字符',
+                        },
+                      ]}
                       noLabel
                     />
-                  )}
+                    {type !== 'select' && (
+                      <Form.Input
+                        fieldClassName="basis-1/2"
+                        field={`${field}.description`}
+                        placeholder="无提示"
+                        noLabel
+                      />
+                    )}
+                  </div>
+                  <div className="py-3">
+                    <Button
+                      type="danger"
+                      theme="borderless"
+                      icon={<CircleMinusIcon />}
+                      onClick={remove}
+                    />
+                  </div>
                 </div>
-                <div className="py-3">
-                  <Button
-                    type="danger"
-                    theme="borderless"
-                    icon={<CircleMinusIcon />}
-                    onClick={remove}
-                  />
-                </div>
-              </div>
-            ))}
-            <div className="py-3">
-              <Button icon={<PlusIcon />} onClick={add}>
+              ))}
+            </div>
+            <div className="py-3 pr-10">
+              <Button block icon={<PlusIcon />} onClick={add}>
                 添加选项
               </Button>
             </div>
