@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, forwardRef, useContext } from 'react'
+import { cn } from '@/lib/utils.ts'
 import {
   ArrayField,
   Button,
@@ -22,7 +22,7 @@ import {
   UploadIcon,
 } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { cn } from '@/lib/utils.ts'
+import { type ReactNode, createContext, forwardRef, useContext } from 'react'
 import type { FormType, SchemaModel } from './index'
 import { parseSchemaModel } from './utils.ts'
 
@@ -33,6 +33,8 @@ export interface FormDesignerProps extends Omit<BaseFormProps, 'onSubmit'> {
   // 前端存储 localStorage 的 key
   formKey?: string
   back?: string
+  isSubmitting?: boolean
+  actions?: ReactNode
 }
 
 const DesignerFieldContext = createContext<{
@@ -50,7 +52,10 @@ const useDesignerField = () => {
 }
 
 export const FormDesigner = forwardRef<Form, FormDesignerProps>(
-  ({ onSave, onFormChange, onFormFocus, formKey = 'schema-form', back, ...props }, ref) => {
+  (
+    { onSave, onFormChange, onFormFocus, formKey = 'schema-form', back, isSubmitting, actions, ...props },
+    ref,
+  ) => {
     const [parent] = useAutoAnimate({ duration: 150 })
 
     return (
@@ -108,18 +113,22 @@ export const FormDesigner = forwardRef<Form, FormDesignerProps>(
                         </Button>
                       </Popconfirm>
                     </div>
-                    <Button
-                      type="primary"
-                      theme="solid"
-                      icon={<CheckIcon />}
-                      onClick={async () => {
-                        const data = await formApi.validate()
-                        localStorage.setItem(formKey, JSON.stringify(data.form))
-                        formApi.submitForm()
-                      }}
-                    >
-                      保存
-                    </Button>
+                    <div className="flex gap-2">
+                      {actions}
+                      <Button
+                        type="primary"
+                        theme="solid"
+                        icon={<CheckIcon />}
+                        loading={isSubmitting}
+                        onClick={async () => {
+                          const data = await formApi.validate()
+                          localStorage.setItem(formKey, JSON.stringify(data.form))
+                          formApi.submitForm()
+                        }}
+                      >
+                        保存
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <div ref={parent} onBlur={() => onFormFocus?.(undefined)}>

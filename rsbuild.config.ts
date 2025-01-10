@@ -16,9 +16,9 @@ export default defineConfig({
     }),
   ],
   html: {
-    title: '表单编辑器 Form Crafter',
+    title: '问卷通',
     meta: {
-      description: '一款简单的表单编辑器',
+      description: '一款简单的问卷创建工具',
     },
   },
   tools: {

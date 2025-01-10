@@ -1,15 +1,17 @@
 import '../tailwind.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
-import * as React from 'react'
 
 export const Route = createRootRoute({
   component: RootComponent,
 })
 
+const queryClient = new QueryClient()
+
 function RootComponent() {
   return (
-    <React.Fragment>
+    <QueryClientProvider client={queryClient}>
       <Outlet />
-    </React.Fragment>
+    </QueryClientProvider>
   )
 }

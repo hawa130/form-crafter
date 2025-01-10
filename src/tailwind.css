@@ -4,11 +4,11 @@
 }
 @layer tailwind-components {
   @tailwind components;
+
+  .lucide {
+    @apply size-4;
+  }
 }
 @layer tailwind-utils {
   @tailwind utilities;
-}
-
-.lucide {
-  @apply size-4;
 }

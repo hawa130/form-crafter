@@ -1,7 +1,7 @@
-import { FormCrafterPage } from '@/pages/form-crafter.tsx'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import { FormCrafterPage } from '@/pages/form-crafter.tsx'
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/survey/new')({
   component: RouteComponent,
 })
 

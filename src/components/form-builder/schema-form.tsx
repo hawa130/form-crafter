@@ -1,8 +1,8 @@
-import { type ReactNode, forwardRef } from 'react'
+import { cn } from '@/lib/utils.ts'
 import { Button, Form, Tooltip } from '@douyinfe/semi-ui'
 import type { BaseFormProps } from '@douyinfe/semi-ui/lib/es/form'
 import { LocateIcon } from 'lucide-react'
-import { cn } from '@/lib/utils.ts'
+import { type ReactNode, forwardRef } from 'react'
 import type { SchemaModel } from './index'
 
 export interface SchemaFormProps extends BaseFormProps {
@@ -14,10 +14,11 @@ export interface SchemaFormProps extends BaseFormProps {
     onLocate?: (id: string) => void
     empty?: ReactNode
   }
+  children?: ReactNode
 }
 
 export const SchemaForm = forwardRef<Form, SchemaFormProps>(
-  ({ schema = [], onSubmit, preview, ...props }, ref) => {
+  ({ schema = [], onSubmit, preview, children, ...props }, ref) => {
     const form: ReactNode[] = schema.map((item, index) => {
       if (!item) return null
 
@@ -203,9 +204,10 @@ export const SchemaForm = forwardRef<Form, SchemaFormProps>(
       )
     })
 
-    return form.length > 0 ? (
+    return !preview || form.length > 0 ? (
       <Form autoScrollToError onSubmit={onSubmit} ref={ref} {...props}>
         {form}
+        {children}
       </Form>
     ) : (
       <div className="py-3 text-center text-sm text-text-2">

@@ -17,6 +17,9 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
+const SurveyNewLazyImport = createFileRoute('/survey/new')()
+const SurveySurveyIdLazyImport = createFileRoute('/survey/$surveyId')()
+const AnswerSurveyIdLazyImport = createFileRoute('/answer/$surveyId')()
 
 // Create/Update Routes
 
@@ -25,6 +28,28 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const SurveyNewLazyRoute = SurveyNewLazyImport.update({
+  id: '/survey/new',
+  path: '/survey/new',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/survey.new.lazy').then((d) => d.Route))
+
+const SurveySurveyIdLazyRoute = SurveySurveyIdLazyImport.update({
+  id: '/survey/$surveyId',
+  path: '/survey/$surveyId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/survey.$surveyId.lazy').then((d) => d.Route),
+)
+
+const AnswerSurveyIdLazyRoute = AnswerSurveyIdLazyImport.update({
+  id: '/answer/$surveyId',
+  path: '/answer/$surveyId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/answer.$surveyId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -37,6 +62,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/answer/$surveyId': {
+      id: '/answer/$surveyId'
+      path: '/answer/$surveyId'
+      fullPath: '/answer/$surveyId'
+      preLoaderRoute: typeof AnswerSurveyIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/survey/$surveyId': {
+      id: '/survey/$surveyId'
+      path: '/survey/$surveyId'
+      fullPath: '/survey/$surveyId'
+      preLoaderRoute: typeof SurveySurveyIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/survey/new': {
+      id: '/survey/new'
+      path: '/survey/new'
+      fullPath: '/survey/new'
+      preLoaderRoute: typeof SurveyNewLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -44,32 +90,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/answer/$surveyId': typeof AnswerSurveyIdLazyRoute
+  '/survey/$surveyId': typeof SurveySurveyIdLazyRoute
+  '/survey/new': typeof SurveyNewLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/answer/$surveyId': typeof AnswerSurveyIdLazyRoute
+  '/survey/$surveyId': typeof SurveySurveyIdLazyRoute
+  '/survey/new': typeof SurveyNewLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/answer/$surveyId': typeof AnswerSurveyIdLazyRoute
+  '/survey/$surveyId': typeof SurveySurveyIdLazyRoute
+  '/survey/new': typeof SurveyNewLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/answer/$surveyId' | '/survey/$surveyId' | '/survey/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/answer/$surveyId' | '/survey/$surveyId' | '/survey/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/answer/$surveyId'
+    | '/survey/$surveyId'
+    | '/survey/new'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  AnswerSurveyIdLazyRoute: typeof AnswerSurveyIdLazyRoute
+  SurveySurveyIdLazyRoute: typeof SurveySurveyIdLazyRoute
+  SurveyNewLazyRoute: typeof SurveyNewLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  AnswerSurveyIdLazyRoute: AnswerSurveyIdLazyRoute,
+  SurveySurveyIdLazyRoute: SurveySurveyIdLazyRoute,
+  SurveyNewLazyRoute: SurveyNewLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -82,11 +148,23 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/answer/$surveyId",
+        "/survey/$surveyId",
+        "/survey/new"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/answer/$surveyId": {
+      "filePath": "answer.$surveyId.lazy.tsx"
+    },
+    "/survey/$surveyId": {
+      "filePath": "survey.$surveyId.lazy.tsx"
+    },
+    "/survey/new": {
+      "filePath": "survey.new.lazy.tsx"
     }
   }
 }
