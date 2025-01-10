@@ -1,13 +1,14 @@
 import { EditableText } from '@/components/editable-text.tsx'
 import { FormDesigner, SchemaForm, type SchemaModel } from '@/components/form-builder'
-import { createSurvey, getSurveys, toDto, updateSurvey } from '@/lib/crud.ts'
-import { Button, DatePicker, Popover, Toast } from '@douyinfe/semi-ui'
+import { createSurvey, getAnswers, getSurveys, toDto, updateSurvey } from '@/lib/crud.ts'
+import { Button, DatePicker, Popover, TabPane, Tabs, Toast } from '@douyinfe/semi-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PlusIcon, Share2Icon } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { QRCodeSVG } from 'qrcode.react'
 import { cn } from '@/lib/utils.ts'
+import { SchemaInfo } from '@/components/form-builder/schema-info.tsx'
 
 export interface CrafterData extends CrafterSaveData {
   id: string
@@ -77,7 +78,7 @@ export function FormCrafter({
   return (
     <div className="max-w-screen-2xl w-full mx-auto px-4">
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px] gap-x-4">
-        <div className="py-4">
+        <div>
           <div className="pr-9 py-2">
             <EditableText value={title} onChange={setTitle} />
           </div>
@@ -164,7 +165,27 @@ export function FormCrafterPage({ initialData }: { initialData?: CrafterData }) 
         </div>
         <FormList currentId={initialData?.id} />
       </div>
-      <FormCrafter initialData={initialData} onSave={saveForm} onCreated={handleCreated} />
+      {initialData ? (
+        <main>
+          <Tabs
+            tabPaneMotion={false}
+            renderTabBar={(props, DefaultTabBar) => (
+              <DefaultTabBar {...props} className="px-4 [&>.semi-tabs-tab]:py-2.5" />
+            )}
+          >
+            <TabPane tab="编辑表单" itemKey="edit" className="overflow-visible">
+              <FormCrafter initialData={initialData} onSave={saveForm} />
+            </TabPane>
+            <TabPane tab="收集结果" itemKey="preview" className="overflow-visible">
+              <AnswersCollection surveyId={initialData.id} schema={initialData.schema} />
+            </TabPane>
+          </Tabs>
+        </main>
+      ) : (
+        <main className="py-2">
+          <FormCrafter onSave={saveForm} onCreated={handleCreated} />
+        </main>
+      )}
     </div>
   )
 }
@@ -211,6 +232,44 @@ function FormList({ currentId }: { currentId?: string }) {
         >
           {survey.title}
         </Link>
+      ))}
+    </div>
+  )
+}
+
+function AnswersCollection({ surveyId, schema }: { surveyId?: string; schema: SchemaModel[] }) {
+  const { data, isError, isPending, refetch } = useQuery({
+    queryKey: ['answers', surveyId],
+    queryFn: async () => (surveyId ? getAnswers(surveyId) : null),
+    enabled: !!surveyId,
+  })
+
+  if (!surveyId) return null
+
+  if (isPending) {
+    return <div className="text-text-2 text-sm text-center px-2">加载中...</div>
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col gap-2 items-center">
+        <div className="text-danger">加载失败</div>
+        <Button onClick={() => refetch()}>重试</Button>
+      </div>
+    )
+  }
+
+  if (!data?.length) {
+    return <div className="text-text-2 text-sm text-center px-2">暂无数据</div>
+  }
+
+  return (
+    <div className="p-4">
+      {data.map((answer, index) => (
+        // biome-ignore lint:lint/suspicious/noArrayIndexKey
+        <div key={index} className="border-b py-4">
+          <SchemaInfo model={schema} data={answer} />
+        </div>
       ))}
     </div>
   )

@@ -3,11 +3,13 @@ import type { CrafterData, CrafterSaveData } from '@/pages/form-crafter.tsx'
 
 const BACKEND_URL = 'https://survey.115.zone'
 
+type BackendJSONConfig = { model: unknown }
+
 interface BackendSurvey {
   id: number
   name: string
   deadline: string
-  json_config: unknown
+  json_config: BackendJSONConfig
   created_at: string
   updated_at: string
 }
@@ -15,7 +17,7 @@ interface BackendSurvey {
 export interface SurveyDto {
   name: string
   deadline: string
-  json_config: unknown
+  json_config: BackendJSONConfig
 }
 
 interface SurveyReturn {
@@ -26,7 +28,7 @@ export function toDto(data: CrafterSaveData) {
   return {
     name: data.title,
     deadline: data.deadline,
-    json_config: data.schema,
+    json_config: { model: data.schema },
   } as SurveyDto
 }
 
@@ -35,7 +37,7 @@ export function toCrafterData(data: BackendSurvey): CrafterData {
     id: String(data.id),
     title: data.name,
     deadline: data.deadline,
-    schema: data.json_config as SchemaModel[],
+    schema: data.json_config.model as SchemaModel[],
   }
 }
 
@@ -102,5 +104,5 @@ export async function getAnswers(surveyId: number | string) {
   if (!res.ok) {
     throw new Error(res.statusText)
   }
-  return (await res.json()) as Record<string, unknown>
+  return (await res.json()) as Record<string, unknown>[]
 }
